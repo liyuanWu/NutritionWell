@@ -1,6 +1,8 @@
 package com.leowoo.nutritionwell.main;
 
 import javafx.util.Pair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,35 +14,35 @@ import java.util.Map;
  */
 public class IngredientResult {
 
+    private WeightParser weightParser = new WeightParser();
+
     String title;
-    List<Pair<String, String>> ingredinents = new ArrayList<>();
-    Map<String, String> catagory = new HashMap<>();
+    List<Pair<String, String>> ingredients = new ArrayList<>();
+    Map<String, String> category = new HashMap<>();
 
     public void setTitle(String title) {
         this.title = title;
     }
 
     public void addIngredient(String ingredient, String weight){
-        ingredinents.add(new Pair<>(ingredient, weight));
+        ingredients.add(new Pair<>(ingredient, weight));
     }
 
-    public void setCatagory(String ing, String cat){
-        catagory.put(ing, cat);
+    public void setCategory(String ing, String cat){
+        category.put(ing, cat);
     }
 
-    public List<Pair<String, String>> getIngredinents() {
-        return ingredinents;
+    public List<Pair<String, String>> getIngredients() {
+        return ingredients;
     }
 
-    public Map<String, Integer> getCatagoryWeight(){
+    public Map<String, Integer> getCategoryWeight(){
 
         Map<String, Integer> result = new HashMap<>();
-        for(Pair<String, String> pair : ingredinents){
+        for(Pair<String, String> pair : ingredients){
             String ing = pair.getKey();
-            String weight = pair.getValue().replaceAll("\\D+","");
-            int weightInt = weight.isEmpty() ? 0 : Integer.parseInt(weight);
-            String cat = catagory.getOrDefault(ing, ing);
-            result.put(cat, result.getOrDefault(cat, 0) + weightInt);
+            String cat = category.getOrDefault(ing, ing);
+            result.put(cat, result.getOrDefault(cat, 0) + weightParser.convertToStandardWeight(pair.getValue()));
         }
         return result;
     }
@@ -48,8 +50,8 @@ public class IngredientResult {
     public String toString(){
         String result = "Title: " + title + "\n";
         result += "Ingredients:\n";
-        for(Pair pair : ingredinents){
-            result += "\t" + pair.getKey() + "\t" + pair.getValue() + (catagory.containsKey(pair.getKey()) ? "\t" + catagory.get(pair.getKey()):"") + "\n";
+        for(Pair pair : ingredients){
+            result += "\t" + pair.getKey() + "\t" + pair.getValue() + (category.containsKey(pair.getKey()) ? "\t" + category.get(pair.getKey()):"") + "\n";
         }
         return result;
     }

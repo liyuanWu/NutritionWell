@@ -20,24 +20,27 @@ public class Mapper {
             Files.lines(Paths.get(ClassLoader.getSystemResource("com/leowoo/nutritionwell/main/mapper.conf").toURI())).forEach(line -> {
                 String[] words = line.split(";");
                 String key = words[0];
-                legalCats.add(key);
-                map.put(key, key);
+                String cat = key.substring(0, key.indexOf("/"));
+                legalCats.add(cat);
+                map.put(cat, cat);
                 if(words.length > 1){
                     for(int i=1;i<words.length;i++){
-                        map.put(words[i], key);
+                        map.put(words[i], cat);
                     }
                 }
             });
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (URISyntaxException e) {
+        } catch (IOException | URISyntaxException e) {
             e.printStackTrace();
         }
     }
 
+    public Set<String> getAllCategory(){
+        return legalCats;
+    }
+
     public Map<String, String> map(IngredientResult ingredientResult){
         Map<String, String> result = new HashMap<>();
-        for(Pair<String, String> pair : ingredientResult.getIngredinents()){
+        for(Pair<String, String> pair : ingredientResult.getIngredients()){
             String ing = pair.getKey();
             String key = getKey(ing);
             result.put(ing, key);
@@ -45,7 +48,7 @@ public class Mapper {
         return result;
     }
 
-    public boolean isLegayCatagory(String cat){
+    public boolean isLegalCategory(String cat){
         return legalCats.contains(cat);
     }
 
